@@ -1,14 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_app/movie_card.dart';
 
-class ShoppingItem extends StatelessWidget {
-  const ShoppingItem({Key? key}) : super(key: key);
+class ShoppingItem extends StatefulWidget {
+  final int numberOfItems;
+  final List<String> images;
+
+  const ShoppingItem({
+    Key? key,
+    required this.numberOfItems,
+    required this.images,
+  }) : super(key: key);
+
+  @override
+  State<ShoppingItem> createState() => _ShoppingItemState();
+}
+
+class _ShoppingItemState extends State<ShoppingItem> {
+  List<String> listImages = [];
+
+  @override
+  void initState() {
+    listImages.addAll(widget.images);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          setState(() {
+            listImages.add('https://cdn-images-1.medium.com/max/1200/1*5-aoK8IBmXve5whBQM90GA.png');
+          });
+        },
+      ),
       appBar: AppBar(
         title: Text('Shopping Item'),
       ),
@@ -19,25 +48,27 @@ class ShoppingItem extends StatelessWidget {
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
         ),
-        children: List.generate(20, (index) {
+        children: List.generate(listImages.length, (index) {
           return Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: Colors.white,
               boxShadow: [BoxShadow()],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: GridTile(
-                child: Image.network(
-                  'https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SY679_.jpg',
-                  fit: BoxFit.cover,
-                ),
-                footer: Container(
-                  padding: EdgeInsets.all(8),
-                  color: Colors.white,
-                  child: Text("Marvel: The Avengers Endgame Movie Poster"),
-                ),
+            child: InkWell(
+              onTap: () {
+                print('Taping ...');
+              },
+              onLongPress: () {
+                print('Removing...');
+                setState(() {
+                  listImages.removeAt(index);
+                });
+              },
+              child: MovieCard(
+                image: listImages[index],
+                description:
+                    'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.',
               ),
             ),
           );
